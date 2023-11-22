@@ -48,6 +48,7 @@ else:
         "token": "",
         "prefix": ""
     }
+    loaddata = newdata
     json_writedata(configspath,newdata)
 os.system('cls')
 print('''┌─────────────────────────────────────────────────────────────────────────────────┐
@@ -62,8 +63,14 @@ print('''┌──────────────────────�
 │      ░    ░  ░               ░  ░                ░ ░      ░ ░      ░  ░      ░  │
 └─────────────────────────────────────────────────────────────────────────────────┘ ''')
 print("GetaBot - ControlPC by Geta (geta1005)\n")
-token = loaddata['token'] or input("BOT TOKEN: ")
-prefix = loaddata['prefix'] or input("PREFIX: ")
+if loaddata['token'] == '':
+    token = input("TOKEN: ")
+else:
+    token = loaddata['token']
+if loaddata['prefix'] == '':
+    prefix = input("PREFIX: ")
+else:
+    prefix = loaddata['prefix']
 length = 0
 status = ['online', 'GetaBot - ControlPC']
 newdata = {
@@ -120,19 +127,19 @@ async def on_message(message):
         try:
             await message.reply(f'```Need help? Contact me through Discord: geta1005\nPREFIX: {prefix}\nCommands:\n{prefix}help\n{prefix}screenshot [ss]\n{prefix}shutdown [sd]\n{prefix}status [st]\n{prefix}exitroblox [er]```')
         except Exception as e:
-            print("\nSomething went wrong!\nOUTPUT:"+str(e))
+            print(f"[{gettimedate()}] Something went wrong!\nOUTPUT:"+str(e))
     elif cmd("screenshot") or cmd("ss"):
         imgpath = localpath+"\screenshot.png"
         try:
             try:
                 pyautogui.screenshot(imgpath)
-                print(f"Saved image at: {imgpath}")
+                print(f"\nSaved image at: {imgpath}")
             except Exception as e:
-                print("\nFailed to take screenshot\nOUTPUT:"+str(e))
+                print(f"[{gettimedate()}] Failed to take screenshot\nOUTPUT:"+str(e))
                 await message.reply("Failed to take screenshot\nOUTPUT:"+str(e))
             await message.reply(file=discord.File(imgpath))
         except Exception as e:
-            print("\nFailed to take screenshot\nOUTPUT:"+str(e))
+            print(f"[{gettimedate()}] Failed to take screenshot\nOUTPUT:"+str(e))
             await message.reply("Failed to take screenshot\nOUTPUT:"+str(e))
     elif cmd("status") or cmd("st"):
         try:
@@ -144,10 +151,11 @@ async def on_message(message):
             for gpu in gpus:
                 textstatus = textstatus+(f"**GPU:** {round(gpu.memoryUtil*100,1)}%\n")
             textstatus = textstatus+(f"**Memory:** {round((memory.used/memory.total)*100,1)}% *[{round(memory.used/1024/1024)}/{round(memory.total/1024/1024)}MB]*")
+            print(f"[{gettimedate()}] Check status of PC:")
             print(textstatus)
             await message.reply(textstatus)
         except Exception as e:
-            print("\nFailed to get status\nOUTPUT:"+str(e))
+            print(f"[{gettimedate()}] Failed to get status\nOUTPUT:"+str(e))
             await message.reply("Failed to get status\nOUTPUT:"+str(e))
     elif cmd("shutdown") or cmd("sd"):
         try:
@@ -161,7 +169,7 @@ async def on_message(message):
                 os.system("shutdown /s /t 0")
             await message.reply("Successfully shutdown the computer")
         except Exception as e:
-            print("\nFailed to shutdown\nOUTPUT:"+str(e))
+            print(f"[{gettimedate()}] Failed to shutdown\nOUTPUT:"+str(e))
             await message.reply("Failed to shutdown\nOUTPUT:"+str(e))
     elif cmd("exitroblox") or cmd('er'):
         try:
@@ -171,14 +179,18 @@ async def on_message(message):
                 totalproc += 1
                 if proc.name() == PROCNAME:
                     proc.kill()
-                    print("\nExited Roblox")
+                    print(f"[{gettimedate()}] Exited Roblox")
                     await message.reply("Exited Roblox")
                 else:
                     count += 1
             if totalproc == count:
-                print("\nRoblox was not found")
+                print(f"[{gettimedate()}] Roblox was not found")
                 await message.reply("Roblox was not found")
         except Exception as e:
-            print("\nFailed to exit Roblox\nOUTPUT:"+str(e))
+            print(f"[{gettimedate()}] Failed to exit Roblox\nOUTPUT:"+str(e))
             await message.reply("Failed to exit Roblox\nOUTPUT:"+str(e))
-bot.run(token)
+try:
+    bot.run(token)
+except Exception as e:
+    print(f"[{gettimedate()}] Failed to run Bot\nOUTPUT:"+str(e))
+    input()
